@@ -12,12 +12,9 @@ view = [0,
 ambient = [50,
            50,
            50]
-light = [[0.5,
-          0.75,
-          1],
-         [0,
-          255,
-          255]]
+light = [[0.5,0.75,1], # Direction
+        [0,255,255]] #Intensity and Color
+#Constants of Ambient, Diffuse, and Specular
 areflect = [0.1,
             0.1,
             0.1]

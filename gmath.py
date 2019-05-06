@@ -12,29 +12,67 @@ from display import *
 
   # Reflection constants (ka, kd, ks) are represened as arrays of
   # doubles (red, green, blue)
-
+#Indices
 AMBIENT = 0
 DIFFUSE = 1
 SPECULAR = 2
 LOCATION = 0
 COLOR = 1
+    #Reflection constants (ka, kd, ks) are represened as arrays of
+  # doubles (red, green, blue)
 SPECULAR_EXP = 4
 
 #lighting functions
 def get_lighting(normal, view, ambient, light, areflect, dreflect, sreflect ):
-    pass
+    nhat = normal[:]
+    vhat = view[:]
+    lhat = [light[LOCATION][:],light[COLOR]]
+    normalize(lhat[LOCATION])
+    normalize(vhat)
+    normalize(nhat)
+    ambience = calculate_ambient(ambient,areflect)
+    diffuse = calculate_diffuse(lhat,dreflect,nhat)
+    specular = calculate_specular(lhat,sreflect,vhat,nhat)
+    limit_color(ambience)
+    limit_color(diffuse)
+    limit_color(specular)
+    result = []
+    for x in range(3):
+        result.append(int(ambience[x]) + int(diffuse[x]) + int(specular[x]))
+    limit_color(result)
+    return result
 
 def calculate_ambient(alight, areflect):
-    pass
+    result = []
+    for x in range(3):
+        result.append(alight[x] * areflect[x])
+    return result
 
 def calculate_diffuse(light, dreflect, normal):
-    pass
+    result = []
+    for x in range(3):
+        result.append(light[COLOR][x] * dreflect[x] * (dot_product(normal,light[LOCATION])))
+    return result
 
 def calculate_specular(light, sreflect, view, normal):
-    pass
+    eq0 = dot_product(normal,light[LOCATION])
+    combo = []
+    for val in range(3):
+        combo.append((2 * eq0 * (normal[val] - light[LOCATION][val])))
+    dotCombo = dot_product(combo,view)
+    dotCombo = dotCombo ** SPECULAR_EXP
+    finResult = []
+    for y in range(3):
+        finResult.append(dotCombo * (light[COLOR][y] * sreflect[y]))
+    return finResult
 
 def limit_color(color):
-    pass
+    for x in range(3):
+        if color[x] < 0:
+            color[x] = 0
+        elif color[x] > 255:
+            color[x] = 255
+        color[x] = int(color[x])
 
 #vector functions
 #normalize vetor, should modify the parameter
